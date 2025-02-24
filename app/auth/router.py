@@ -69,13 +69,6 @@ async def get_me(user_data: User = Depends(get_current_user)) -> SUserInfo:
     return SUserInfo.model_validate(user_data)
 
 
-@router.get("/all_users/")
-async def get_all_users(
-    session: AsyncSession = Depends(get_session_with_commit), user_data: User = Depends(get_current_admin_user)
-) -> List[SUserInfo]:
-    return await UsersDAO(session).find_all()
-
-
 @router.post("/refresh")
 async def process_refresh_token(response: Response, user: User = Depends(check_refresh_token)):
     set_tokens(response, user.id)
