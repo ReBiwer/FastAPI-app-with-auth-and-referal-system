@@ -12,8 +12,10 @@ from app.auth.schemas import SUserAddDB
 from app.auth.schemas import SUserAuth
 from app.auth.schemas import SUserInfo
 from app.auth.schemas import SUserRegister
+from app.auth.schemas import ReferralCodeModel
 from app.auth.utils import authenticate_user
 from app.auth.utils import set_tokens
+from app.auth.utils import check_referrer
 from app.dependencies.auth_dep import check_refresh_token
 from app.dependencies.auth_dep import get_current_admin_user
 from app.dependencies.auth_dep import get_current_user
@@ -21,6 +23,7 @@ from app.dependencies.dao_dep import get_session_with_commit
 from app.dependencies.dao_dep import get_session_without_commit
 from app.exceptions import IncorrectEmailOrPasswordException
 from app.exceptions import UserAlreadyExistsException
+from app.exceptions import ReferralCodeNotFoundException
 
 router = APIRouter()
 
@@ -34,9 +37,14 @@ async def register_user(user_data: SUserRegister, session: AsyncSession = Depend
     if existing_user:
         raise UserAlreadyExistsException
 
-    # Подготовка данных для добавления
     user_data_dict = user_data.model_dump()
     user_data_dict.pop("confirm_password", None)
+
+    if user_data.referral_code:
+        referrer = await check_referrer(user_data, session)
+        if not referrer:
+            raise ReferralCodeNotFoundException
+        user_data_dict["referrer_id"] = referrer.id
 
     # Добавление пользователя
     await user_dao.add(values=SUserAddDB(**user_data_dict))
