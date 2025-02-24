@@ -21,7 +21,7 @@ class User(Base):
     # Связь многие-к-одному: каждый реферал ссылается на одного реферера
     referrer: Mapped["User"] = relationship("User", back_populates="referrals")
     # Связь один-к-одному с реферальным кодом
-    referral_code: Mapped["ReferralCode"] = relationship("ReferralCode", back_populates="user", uselist=False)
+    referral_code: Mapped["ReferralCode"] = relationship("ReferralCode", back_populates="user", uselist=False, lazy="select")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id})"

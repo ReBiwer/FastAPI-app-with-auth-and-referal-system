@@ -49,19 +49,6 @@ def create_app() -> FastAPI:
 
 def register_routers(app: FastAPI) -> None:
     """Регистрация роутеров приложения."""
-    # Корневой роутер
-    root_router = APIRouter()
-
-    @root_router.get("/", tags=["root"])
-    def home_page():
-        return {
-            "message": "Добро пожаловать! Проект создан для сообщества 'Легкий путь в Python'.",
-            "community": "https://t.me/PythonPathMaster",
-            "author": "Яковенко Алексей",
-        }
-
-    # Подключение роутеров
-    app.include_router(root_router, tags=["root"])
     app.include_router(router_auth, prefix="/auth", tags=["Auth"])
     app.include_router(router_ref, prefix="/ref", tags=["Referral system"])
 

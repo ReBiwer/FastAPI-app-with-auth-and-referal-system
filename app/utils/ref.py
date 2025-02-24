@@ -14,7 +14,7 @@ from app.config import settings
 from schemas.ref import ReferralCode
 
 
-def get_ref_code(len_code: int = 6):
+def create_get_ref_code(len_code: int = 6):
     characters = string.digits + string.ascii_uppercase
     random_string = "".join(random.choice(characters) for _ in range(len_code))
     return random_string
@@ -38,10 +38,10 @@ def _get_conn_config() -> ConnectionConfig:
 def send_code_to_mail(user: User, ref_code: ReferralCode, background_tasks: BackgroundTasks):
     mail_conf = _get_conn_config()
     end_action_date_code = datetime.now() + timedelta(days=ref_code.action_time_day)
-    text = f"Ваш реферальный код: {ReferralCode.code}\n" f"Действителен до {end_action_date_code.strftime("%d.%m.%Y")}"
+    text = f"Ваш реферальный код: {ref_code.code}\n" f"Действителен до {end_action_date_code.strftime("%d.%m.%Y")}"
     msg = MessageSchema(
         subject="Реферальный код",
-        recipients=user.email,
+        recipients=[user.email],
         body=text,
         subtype=MessageType.plain,
     )
