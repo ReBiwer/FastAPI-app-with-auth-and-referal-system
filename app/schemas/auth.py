@@ -15,7 +15,7 @@ class ReferralCodeModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class EmailModel(ReferralCodeModel):
+class EmailModel(BaseModel):
     email: EmailStr = Field(description="Электронная почта")
 
 
@@ -31,7 +31,7 @@ class UserBase(EmailModel):
         return value
 
 
-class SUserRegister(UserBase):
+class SUserRegister(UserBase, ReferralCodeModel):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
     confirm_password: str = Field(min_length=5, max_length=50, description="Повторите пароль")
 
