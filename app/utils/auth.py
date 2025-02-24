@@ -7,10 +7,10 @@ from jose import jwt
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.dao import UsersDAO
-from app.auth.models import User
-from app.auth.schemas import ReferralCodeModel
-from app.auth.schemas import SUserRegister
+from dao.auth import UsersDAO
+from models.auth import User
+from schemas.auth import ReferralCodeModel
+from schemas.auth import SUserRegister
 from app.config import settings
 
 

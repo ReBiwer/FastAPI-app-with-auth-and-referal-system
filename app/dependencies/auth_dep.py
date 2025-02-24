@@ -8,8 +8,8 @@ from jose import JWTError
 from jose import jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.dao import UsersDAO
-from app.auth.models import User
+from dao.auth import UsersDAO
+from models.auth import User
 from app.config import settings
 from app.dependencies.dao_dep import get_session_without_commit
 from app.exceptions import ForbiddenException

@@ -8,8 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
 
-from app.auth.router import router as router_auth
-from app.referral_system.router import router as router_ref
+from routers.auth import router as router_auth
+from routers.ref import router as router_ref
 
 
 @asynccontextmanager

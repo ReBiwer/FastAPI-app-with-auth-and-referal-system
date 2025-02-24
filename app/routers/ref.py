@@ -6,16 +6,16 @@ from fastapi import Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.models import User
+from models.auth import User
 from app.dependencies.auth_dep import get_current_user
 from app.dependencies.dao_dep import get_session_with_commit
-from app.referral_system.dao import ReferralCodeDAO
-from app.referral_system.models import ReferralCode
-from app.referral_system.schemas import CreateReferralCode
-from app.referral_system.schemas import ReferralCode
-from app.referral_system.schemas import Referrer
-from app.referral_system.utils import get_ref_code
-from app.referral_system.utils import send_code_to_mail
+from dao.ref import ReferralCodeDAO
+from models.ref import ReferralCode
+from schemas.ref import CreateReferralCode
+from schemas.ref import ReferralCode
+from schemas.ref import Referrer
+from utils.ref import get_ref_code
+from utils.ref import send_code_to_mail
 
 router = APIRouter()
 

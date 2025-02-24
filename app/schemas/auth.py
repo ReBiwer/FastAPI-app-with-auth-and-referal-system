@@ -8,7 +8,6 @@ from pydantic import Field
 from pydantic import field_validator
 from pydantic import model_validator
 
-from app.auth.utils import get_password_hash
 
 
 class ReferralCodeModel(BaseModel):
@@ -38,6 +37,7 @@ class SUserRegister(UserBase):
 
     @model_validator(mode="after")
     def check_password(self) -> Self:
+        from utils.auth import get_password_hash
         if self.password != self.confirm_password:
             raise ValueError("Пароли не совпадают")
         self.password = get_password_hash(self.password)  # хешируем пароль до сохранения в базе данных
@@ -46,7 +46,7 @@ class SUserRegister(UserBase):
 
 class SUserAddDB(UserBase):
     password: str = Field(min_length=5, description="Пароль в формате HASH-строки")
-    referrer_id: int
+    referrer_id: Optional[int] = Field(default=None)
 
 
 class SUserAuth(EmailModel):

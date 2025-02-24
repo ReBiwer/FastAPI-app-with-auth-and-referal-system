@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 from app.config import database_url
 from app.dao.database import Base
-from app.auth.models import User
-from app.referral_system.models import ReferralCode
+from models.auth import User
+from models.ref import ReferralCode
 
 config = context.config
 config.set_main_option("sqlalchemy.url", database_url)

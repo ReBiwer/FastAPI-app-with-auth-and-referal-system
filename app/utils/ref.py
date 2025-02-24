@@ -9,9 +9,9 @@ from fastapi_mail import FastMail
 from fastapi_mail import MessageSchema
 from fastapi_mail import MessageType
 
-from app.auth.models import User
+from models.auth import User
 from app.config import settings
-from app.referral_system.schemas import ReferralCode
+from schemas.ref import ReferralCode
 
 
 def get_ref_code(len_code: int = 6):

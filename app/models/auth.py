@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 
 from app.dao.database import Base
 from app.dao.database import str_uniq
-from app.referral_system.models import ReferralCode
+from models.ref import ReferralCode
 
 
 class User(Base):
@@ -14,12 +14,12 @@ class User(Base):
     last_name: Mapped[str]
     email: Mapped[str_uniq]
     password: Mapped[str]
-    referrer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
+    referrer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True, default=None)
 
     # Связь один-ко-многим: один пользователь может иметь много рефералов
-    referrals: Mapped[list["User"]] = relationship("User", back_populates="referrer", remote_side="users.id")
+    referrals: Mapped[list["User"]] = relationship("User", back_populates="referrer", remote_side="User.id", foreign_keys="User.referrer_id")
     # Связь многие-к-одному: каждый реферал ссылается на одного реферера
-    referrer: Mapped["User"] = relationship("User", back_populates="referrals", remote_side="users.id")
+    referrer: Mapped["User"] = relationship("User", back_populates="referrals")
     # Связь один-к-одному с реферальным кодом
     referral_code: Mapped["ReferralCode"] = relationship("ReferralCode", back_populates="user", uselist=False)
 
