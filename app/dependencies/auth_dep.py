@@ -1,20 +1,28 @@
-from datetime import datetime, timezone
-from fastapi import Request, Depends
-from jose import jwt, JWTError, ExpiredSignatureError
+from datetime import datetime
+from datetime import timezone
+
+from fastapi import Depends
+from fastapi import Request
+from jose import ExpiredSignatureError
+from jose import JWTError
+from jose import jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dao import UsersDAO
 from app.auth.models import User
 from app.config import settings
 from app.dependencies.dao_dep import get_session_without_commit
-from app.exceptions import (
-    TokenNoFound, NoJwtException, TokenExpiredException, NoUserIdException, ForbiddenException, UserNotFoundException
-)
+from app.exceptions import ForbiddenException
+from app.exceptions import NoJwtException
+from app.exceptions import NoUserIdException
+from app.exceptions import TokenExpiredException
+from app.exceptions import TokenNoFound
+from app.exceptions import UserNotFoundException
 
 
 def get_access_token(request: Request) -> str:
     """Извлекаем access_token из кук."""
-    token = request.cookies.get('user_access_token')
+    token = request.cookies.get("user_access_token")
     if not token:
         raise TokenNoFound
     return token
@@ -22,23 +30,18 @@ def get_access_token(request: Request) -> str:
 
 def get_refresh_token(request: Request) -> str:
     """Извлекаем refresh_token из кук."""
-    token = request.cookies.get('user_refresh_token')
+    token = request.cookies.get("user_refresh_token")
     if not token:
         raise TokenNoFound
     return token
 
 
 async def check_refresh_token(
-        token: str = Depends(get_refresh_token),
-        session: AsyncSession = Depends(get_session_without_commit)
+    token: str = Depends(get_refresh_token), session: AsyncSession = Depends(get_session_without_commit)
 ) -> User:
-    """ Проверяем refresh_token и возвращаем пользователя."""
+    """Проверяем refresh_token и возвращаем пользователя."""
     try:
-        payload = jwt.decode(
-            token,
-            settings.SECRET_KEY,
-            algorithms=[settings.ALGORITHM]
-        )
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         user_id = payload.get("sub")
         if not user_id:
             raise NoJwtException
@@ -53,8 +56,7 @@ async def check_refresh_token(
 
 
 async def get_current_user(
-        token: str = Depends(get_access_token),
-        session: AsyncSession = Depends(get_session_without_commit)
+    token: str = Depends(get_access_token), session: AsyncSession = Depends(get_session_without_commit)
 ) -> User:
     """Проверяем access_token и возвращаем пользователя."""
     try:
@@ -66,12 +68,12 @@ async def get_current_user(
         # Общая ошибка для токенов
         raise NoJwtException
 
-    expire: str = payload.get('exp')
+    expire: str = payload.get("exp")
     expire_time = datetime.fromtimestamp(int(expire), tz=timezone.utc)
     if (not expire) or (expire_time < datetime.now(timezone.utc)):
         raise TokenExpiredException
 
-    user_id: str = payload.get('sub')
+    user_id: str = payload.get("sub")
     if not user_id:
         raise NoUserIdException
 

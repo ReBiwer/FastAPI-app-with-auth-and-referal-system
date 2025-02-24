@@ -2,7 +2,8 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 import uvicorn
-from fastapi import FastAPI, APIRouter
+from fastapi import APIRouter
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
@@ -21,11 +22,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
 
 def create_app() -> FastAPI:
     """
-   Создание и конфигурация FastAPI приложения.
+    Создание и конфигурация FastAPI приложения.
 
-   Returns:
-       Сконфигурированное приложение FastAPI
-   """
+    Returns:
+        Сконфигурированное приложение FastAPI
+    """
     app = FastAPI(
         title="Стартовая сборка FastAPI",
         description=(
@@ -40,19 +41,11 @@ def create_app() -> FastAPI:
 
     # Настройка CORS
     app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"]
+        CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"]
     )
 
     # Монтирование статических файлов
-    app.mount(
-        '/static',
-        StaticFiles(directory='app/static'),
-        name='static'
-    )
+    app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
     # Регистрация роутеров
     register_routers(app)
@@ -70,13 +63,13 @@ def register_routers(app: FastAPI) -> None:
         return {
             "message": "Добро пожаловать! Проект создан для сообщества 'Легкий путь в Python'.",
             "community": "https://t.me/PythonPathMaster",
-            "author": "Яковенко Алексей"
+            "author": "Яковенко Алексей",
         }
 
     # Подключение роутеров
     app.include_router(root_router, tags=["root"])
-    app.include_router(router_auth, prefix='/auth', tags=['Auth'])
-    app.include_router(router_ref, prefix="/ref", tags=['Referral system'])
+    app.include_router(router_auth, prefix="/auth", tags=["Auth"])
+    app.include_router(router_ref, prefix="/ref", tags=["Referral system"])
 
 
 # Создание экземпляра приложения

@@ -1,16 +1,22 @@
-import string
 import random
+import string
+from datetime import datetime
+from datetime import timedelta
+
 from fastapi import BackgroundTasks
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
-from datetime import datetime, timedelta
+from fastapi_mail import ConnectionConfig
+from fastapi_mail import FastMail
+from fastapi_mail import MessageSchema
+from fastapi_mail import MessageType
+
 from app.auth.models import User
-from app.referral_system.schemas import ReferralCode
 from app.config import settings
+from app.referral_system.schemas import ReferralCode
 
 
 def get_ref_code(len_code: int = 6):
     characters = string.digits + string.ascii_uppercase
-    random_string = ''.join(random.choice(characters) for _ in range(len_code))
+    random_string = "".join(random.choice(characters) for _ in range(len_code))
     return random_string
 
 
@@ -32,8 +38,7 @@ def _get_conn_config() -> ConnectionConfig:
 def send_code_to_mail(user: User, ref_code: ReferralCode, background_tasks: BackgroundTasks):
     mail_conf = _get_conn_config()
     end_action_date_code = datetime.now() + timedelta(days=ref_code.action_time_day)
-    text = (f"Ваш реферальный код: {ReferralCode.code}\n"
-            f"Действителен до {end_action_date_code.strftime("%d.%m.%Y")}")
+    text = f"Ваш реферальный код: {ReferralCode.code}\n" f"Действителен до {end_action_date_code.strftime("%d.%m.%Y")}"
     msg = MessageSchema(
         subject="Реферальный код",
         recipients=user.email,
