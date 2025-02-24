@@ -1,20 +1,23 @@
 import re
-from typing import Self
+from typing import Self, Optional
 
 from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import EmailStr
 from pydantic import Field
-from pydantic import computed_field
 from pydantic import field_validator
 from pydantic import model_validator
 
 from app.auth.utils import get_password_hash
 
 
-class EmailModel(BaseModel):
-    email: EmailStr = Field(description="Электронная почта")
+class ReferralCodeModel(BaseModel):
+    referral_code: Optional[str] = Field(description="Если есть реферальный код, введите его", default=None)
     model_config = ConfigDict(from_attributes=True)
+
+
+class EmailModel(ReferralCodeModel):
+    email: EmailStr = Field(description="Электронная почта")
 
 
 class UserBase(EmailModel):
@@ -43,6 +46,7 @@ class SUserRegister(UserBase):
 
 class SUserAddDB(UserBase):
     password: str = Field(min_length=5, description="Пароль в формате HASH-строки")
+    referrer_id: int
 
 
 class SUserAuth(EmailModel):
