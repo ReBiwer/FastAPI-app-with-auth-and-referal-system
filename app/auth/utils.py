@@ -5,7 +5,12 @@ from datetime import timezone
 from fastapi.responses import Response
 from jose import jwt
 from passlib.context import CryptContext
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.dao import UsersDAO
+from app.auth.models import User
+from app.auth.schemas import ReferralCodeModel
+from app.auth.schemas import SUserRegister
 from app.config import settings
 
 
@@ -52,3 +57,9 @@ def get_password_hash(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
+
+
+async def check_referrer(user_info: SUserRegister, session: AsyncSession) -> User | None:
+    ref_code = ReferralCodeModel(referral_code=user_info.referral_code)
+    user_dao = UsersDAO(session)
+    return await user_dao.find_one_or_none(ref_code)
