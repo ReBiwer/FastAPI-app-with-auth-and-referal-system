@@ -1,5 +1,6 @@
-from app.dao.base import BaseDAO
 from models.ref import ReferralCode
+
+from app.dao.base import BaseDAO
 
 
 class ReferralCodeDAO(BaseDAO):

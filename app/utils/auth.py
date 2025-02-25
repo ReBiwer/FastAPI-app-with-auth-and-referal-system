@@ -2,15 +2,15 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 
+from dao.auth import UsersDAO
 from fastapi.responses import Response
 from jose import jwt
-from passlib.context import CryptContext
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from dao.auth import UsersDAO
 from models.auth import User
+from passlib.context import CryptContext
 from schemas.auth import ReferralCodeModel
 from schemas.auth import SUserRegister
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.config import settings
 
 

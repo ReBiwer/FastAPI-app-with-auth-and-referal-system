@@ -4,7 +4,8 @@ from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import EmailStr
 from pydantic import Field
-from pydantic import computed_field, field_validator
+from pydantic import computed_field
+from pydantic import field_validator
 
 
 class CreateReferralCode(BaseModel):
@@ -19,7 +20,6 @@ class CreateReferralCode(BaseModel):
 class ReferralCode(CreateReferralCode):
     user_id: int
     code: str = Field(description="Реферальный код")
-
 
 
 class DeleteReferralCode(BaseModel):
@@ -38,10 +38,9 @@ class Referrer(BaseModel):
         if value:
             validating_referrals = []
             for user in value:
-                referral = Referrer(first_name=user.first_name,
-                                    last_name=user.last_name,
-                                    email=user.email,
-                                    referrals=user.referrals)
+                referral = Referrer(
+                    first_name=user.first_name, last_name=user.last_name, email=user.email, referrals=user.referrals
+                )
                 validating_referrals.append(referral)
             return validating_referrals
         return None

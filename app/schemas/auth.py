@@ -1,5 +1,6 @@
 import re
-from typing import Self, Optional
+from typing import Optional
+from typing import Self
 
 from pydantic import BaseModel
 from pydantic import ConfigDict
@@ -7,7 +8,6 @@ from pydantic import EmailStr
 from pydantic import Field
 from pydantic import field_validator
 from pydantic import model_validator
-
 
 
 class ReferralCodeModel(BaseModel):
@@ -38,6 +38,7 @@ class SUserRegister(UserBase, ReferralCodeModel):
     @model_validator(mode="after")
     def check_password(self) -> Self:
         from utils.auth import get_password_hash
+
         if self.password != self.confirm_password:
             raise ValueError("Пароли не совпадают")
         self.password = get_password_hash(self.password)  # хешируем пароль до сохранения в базе данных

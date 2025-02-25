@@ -8,10 +8,10 @@ from fastapi_mail import ConnectionConfig
 from fastapi_mail import FastMail
 from fastapi_mail import MessageSchema
 from fastapi_mail import MessageType
-
 from models.auth import User
-from app.config import settings
 from schemas.ref import ReferralCode
+
+from app.config import settings
 
 
 def create_get_ref_code(len_code: int = 6):

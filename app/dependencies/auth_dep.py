@@ -1,15 +1,15 @@
 from datetime import datetime
 from datetime import timezone
 
+from dao.auth import UsersDAO
 from fastapi import Depends
 from fastapi import Request
 from jose import ExpiredSignatureError
 from jose import JWTError
 from jose import jwt
+from models.auth import User
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from dao.auth import UsersDAO
-from models.auth import User
 from app.config import settings
 from app.dependencies.dao_dep import get_session_without_commit
 from app.exceptions import ForbiddenException

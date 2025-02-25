@@ -1,27 +1,29 @@
 import datetime
 
+from dao.ref import ReferralCodeDAO
 from fastapi import APIRouter
 from fastapi import BackgroundTasks
 from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from models.auth import User
-from app.dependencies.auth_dep import get_current_user
-from app.dependencies.dao_dep import get_session_with_commit
-from dao.ref import ReferralCodeDAO
 from models.ref import ReferralCode
-from schemas.ref import CreateReferralCode, DeleteReferralCode
+from schemas.ref import CreateReferralCode
+from schemas.ref import DeleteReferralCode
 from schemas.ref import ReferralCode
 from schemas.ref import Referrer
+from sqlalchemy.ext.asyncio import AsyncSession
 from utils.ref import create_get_ref_code
 from utils.ref import send_code_to_mail
+
+from app.dependencies.auth_dep import get_current_user
+from app.dependencies.dao_dep import get_session_with_commit
 
 router = APIRouter()
 
 
 @router.post("/create/")
 async def create_ref_code(
-    data: CreateReferralCode, session: AsyncSession = Depends(get_session_with_commit)
+    data: CreateReferralCode,
+    session: AsyncSession = Depends(get_session_with_commit),
     # user_data: User = Depends(get_current_user)
 ) -> ReferralCode:
     new_code = create_get_ref_code()
@@ -54,7 +56,7 @@ async def get_all_refers(
         first_name=user_data.first_name,
         last_name=user_data.last_name,
         email=user_data.email,
-        referrals=user_data.referrals
+        referrals=user_data.referrals,
     )
     if referrer.referrals:
         return referrer

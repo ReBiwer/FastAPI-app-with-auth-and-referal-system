@@ -5,7 +5,9 @@ from fastapi import status
 UserAlreadyExistsException = HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Пользователь уже существует")
 
 # Реферальный код не верный или он не действительный
-ReferralCodeNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Реферальный код не верный или он не действительный")
+ReferralCodeNotFoundException = HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND, detail="Реферальный код не верный или он не действительный"
+)
 
 
 # Пользователь не найден
