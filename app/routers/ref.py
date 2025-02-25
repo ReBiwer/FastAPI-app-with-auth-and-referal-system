@@ -10,10 +10,11 @@ from schemas.ref import CreateReferralCode
 from schemas.ref import DeleteReferralCode
 from schemas.ref import ReferralCode
 from schemas.ref import Referrer
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils.ref import create_get_ref_code
 from utils.ref import send_code_to_mail
-
+from app.exceptions import RefCodeNotFoundException
 from app.dependencies.auth_dep import get_current_user
 from app.dependencies.dao_dep import get_session_with_commit
 
@@ -24,10 +25,10 @@ router = APIRouter()
 async def create_ref_code(
     data: CreateReferralCode,
     session: AsyncSession = Depends(get_session_with_commit),
-    # user_data: User = Depends(get_current_user)
+    user_data: User = Depends(get_current_user)
 ) -> ReferralCode:
     new_code = create_get_ref_code()
-    ref_code = ReferralCode(code=new_code, action_time_day=data.action_time_day, user_id=1)
+    ref_code = ReferralCode(code=new_code, action_time_day=data.action_time_day, user_id=user_data.id)
     ref_code_dao = ReferralCodeDAO(session)
     await ref_code_dao.add(ref_code)
     return ref_code
@@ -36,8 +37,11 @@ async def create_ref_code(
 @router.delete("/delete/")
 async def delete_ref_code(code: DeleteReferralCode, session: AsyncSession = Depends(get_session_with_commit)) -> dict:
     ref_code_dao = ReferralCodeDAO(session)
-    await ref_code_dao.delete(code)
-    return {"success": True, "description": f"referral code {code.code} deleted"}
+    try:
+        await ref_code_dao.delete(code)
+        return {"status_code": 204, "success": True, "description": f"referral code {code.code} deleted"}
+    except SQLAlchemyError:
+        raise RefCodeNotFoundException
 
 
 @router.get("/get_on_mail/")
