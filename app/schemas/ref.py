@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import EmailStr
 from pydantic import Field
-from pydantic import computed_field
+from pydantic import computed_field, field_validator
 
 
 class CreateReferralCode(BaseModel):
@@ -31,7 +31,20 @@ class Referrer(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
-    referrals: list["Referrer"]
+    referrals: list["Referrer"] | None = Field(exclude=True)
+
+    @field_validator("referrals", mode="before")
+    def validate_referrals(cls, value: list["User"] | None) -> list["Referrer"] | None:
+        if value:
+            validating_referrals = []
+            for user in value:
+                referral = Referrer(first_name=user.first_name,
+                                    last_name=user.last_name,
+                                    email=user.email,
+                                    referrals=user.referrals)
+                validating_referrals.append(referral)
+            return validating_referrals
+        return None
 
     class Config:
         orm_mode = True

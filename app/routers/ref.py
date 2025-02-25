@@ -3,7 +3,6 @@ import datetime
 from fastapi import APIRouter
 from fastapi import BackgroundTasks
 from fastapi import Depends
-from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.auth import User
@@ -33,22 +32,30 @@ async def create_ref_code(
 
 
 @router.delete("/delete/")
-async def delete_ref_code(code: DeleteReferralCode, session: AsyncSession = Depends(get_session_with_commit)):
+async def delete_ref_code(code: DeleteReferralCode, session: AsyncSession = Depends(get_session_with_commit)) -> dict:
     ref_code_dao = ReferralCodeDAO(session)
     await ref_code_dao.delete(code)
-    return JSONResponse(status_code=204, content={"success": True, "description": f"referral code {code.code} deleted"})
+    return {"success": True, "description": f"referral code {code.code} deleted"}
 
 
 @router.get("/get_on_mail/")
-async def get_ref_code(background_tasks: BackgroundTasks, user_data: User = Depends(get_current_user)):
+async def get_ref_code(background_tasks: BackgroundTasks, user_data: User = Depends(get_current_user)) -> dict:
     action_time_code = user_data.referral_code.action_time - datetime.datetime.now()
     ref_code = ReferralCode(code=user_data.referral_code.code, action_time_day=action_time_code.days, user_id=1)
     send_code_to_mail(user_data, ref_code, background_tasks)
-    return JSONResponse(status_code=200, content={"message": "email has been sent"})
+    return {"message": "email has been sent"}
 
 
 @router.get("/get_all_refers/")
 async def get_all_refers(
     user_data: User = Depends(get_current_user),
-) -> Referrer:
-    return Referrer.model_validate(user_data)
+) -> Referrer | dict:
+    referrer = Referrer(
+        first_name=user_data.first_name,
+        last_name=user_data.last_name,
+        email=user_data.email,
+        referrals=user_data.referrals
+    )
+    if referrer.referrals:
+        return referrer
+    return {"message": "You don't have any referrals"}
