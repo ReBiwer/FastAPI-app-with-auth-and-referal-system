@@ -21,10 +21,6 @@ class ReferralCode(CreateReferralCode):
     code: str = Field(description="Реферальный код")
 
 
-class GetReferralCode(BaseModel):
-    user_id: int
-    code: str = Field(description="Реферальный код")
-
 
 class DeleteReferralCode(BaseModel):
     code: str = Field(description="Реферальный код")
