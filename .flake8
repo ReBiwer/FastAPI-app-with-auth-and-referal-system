@@ -1,0 +1,13 @@
+[flake8]
+# Игнорируемые ошибки
+ignore = E501, W503
+
+# Максимальная длина строки
+max-line-length = 120
+
+# Исключить папки/файлы
+exclude =
+    migration,
+    venv,
+    .git,
+    __pycache__
