@@ -10,7 +10,7 @@ from app.schemas.auth import SUserInfo
 from app.schemas.auth import SUserRegister
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.utils.auth import authenticate_user
-from app.utils.auth import check_referrer
+from app.utils.auth import get_referrer
 from app.utils.auth import set_tokens
 
 from app.dependencies.auth_dep import check_refresh_token
@@ -37,7 +37,7 @@ async def register_user(user_data: SUserRegister, session: AsyncSession = Depend
     user_data_dict.pop("confirm_password", None)
 
     if user_data.referral_code:
-        referrer = await check_referrer(user_data, session)
+        referrer = await get_referrer(user_data, session)
         if not referrer:
             raise ReferralCodeNotFoundException
         user_data_dict["referrer_id"] = referrer.id
