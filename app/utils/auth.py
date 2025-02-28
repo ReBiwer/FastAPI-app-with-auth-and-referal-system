@@ -5,7 +5,7 @@ from datetime import timezone
 from dao.auth import UsersDAO
 from fastapi.responses import Response
 from jose import jwt
-from models.auth import User
+from app.models.auth import User
 from passlib.context import CryptContext
 from schemas.auth import ReferralCodeModel
 from schemas.auth import SUserRegister

@@ -1,5 +1,5 @@
 from loguru import logger
-from models.auth import User
+from app.models.auth import User
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import selectinload

@@ -4,15 +4,15 @@ from dao.ref import ReferralCodeDAO
 from fastapi import APIRouter
 from fastapi import BackgroundTasks
 from fastapi import Depends
-from models.auth import User
-from schemas.ref import CreateReferralCode
-from schemas.ref import DeleteReferralCode
-from schemas.ref import ReferralCodeInfo
-from schemas.ref import Referrer
+from app.models.auth import User
+from app.schemas.ref import CreateReferralCode
+from app.schemas.ref import DeleteReferralCode
+from app.schemas.ref import ReferralCodeInfo
+from app.schemas.ref import Referrer
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from utils.ref import create_get_ref_code
-from utils.ref import send_code_to_mail
+from app.utils.ref import create_get_ref_code
+from app.utils.ref import send_code_to_mail
 
 from app.dependencies.auth_dep import get_current_user
 from app.dependencies.dao_dep import get_session_with_commit

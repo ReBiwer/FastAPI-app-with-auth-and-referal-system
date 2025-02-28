@@ -1,4 +1,4 @@
-from models.ref import ReferralCode
+from app.models.ref import ReferralCode
 
 from app.dao.base import BaseDAO
 

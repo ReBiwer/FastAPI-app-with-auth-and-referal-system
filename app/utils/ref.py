@@ -8,8 +8,8 @@ from fastapi_mail import ConnectionConfig
 from fastapi_mail import FastMail
 from fastapi_mail import MessageSchema
 from fastapi_mail import MessageType
-from models.auth import User
-from schemas.ref import ReferralCodeInfo
+from app.models.auth import User
+from app.schemas.ref import ReferralCodeInfo
 
 from app.config import settings
 

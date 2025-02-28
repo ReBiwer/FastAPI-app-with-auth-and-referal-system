@@ -2,16 +2,16 @@ from dao.auth import UsersDAO
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import Response
-from models.auth import User
-from schemas.auth import EmailModel
-from schemas.auth import SUserAddDB
-from schemas.auth import SUserAuth
-from schemas.auth import SUserInfo
-from schemas.auth import SUserRegister
+from app.models.auth import User
+from app.schemas.auth import EmailModel
+from app.schemas.auth import SUserAddDB
+from app.schemas.auth import SUserAuth
+from app.schemas.auth import SUserInfo
+from app.schemas.auth import SUserRegister
 from sqlalchemy.ext.asyncio import AsyncSession
-from utils.auth import authenticate_user
-from utils.auth import check_referrer
-from utils.auth import set_tokens
+from app.utils.auth import authenticate_user
+from app.utils.auth import check_referrer
+from app.utils.auth import set_tokens
 
 from app.dependencies.auth_dep import check_refresh_token
 from app.dependencies.auth_dep import get_current_user
