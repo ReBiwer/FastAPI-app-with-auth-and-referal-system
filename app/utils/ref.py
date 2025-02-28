@@ -9,7 +9,7 @@ from fastapi_mail import FastMail
 from fastapi_mail import MessageSchema
 from fastapi_mail import MessageType
 from models.auth import User
-from schemas.ref import ReferralCode
+from schemas.ref import ReferralCodeInfo
 
 from app.config import settings
 
@@ -35,7 +35,7 @@ def _get_conn_config() -> ConnectionConfig:
     )
 
 
-def send_code_to_mail(user: User, ref_code: ReferralCode, background_tasks: BackgroundTasks):
+def send_code_to_mail(user: User, ref_code: ReferralCodeInfo, background_tasks: BackgroundTasks):
     mail_conf = _get_conn_config()
     end_action_date_code = datetime.now() + timedelta(days=ref_code.action_time_day)
     text = f"Ваш реферальный код: {ref_code.code}\n" f"Действителен до {end_action_date_code.strftime("%d.%m.%Y")}"

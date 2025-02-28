@@ -7,6 +7,8 @@ from pydantic import Field
 from pydantic import computed_field
 from pydantic import field_validator
 
+from app.models.auth import User
+
 
 class CreateReferralCode(BaseModel):
     action_time_day: int | None = Field(description="Количество дней которое будет действовать код", exclude=True)
@@ -17,7 +19,7 @@ class CreateReferralCode(BaseModel):
         return datetime.datetime.now() + datetime.timedelta(days=self.action_time_day)
 
 
-class ReferralCode(CreateReferralCode):
+class ReferralCodeInfo(CreateReferralCode):
     user_id: int
     code: str = Field(description="Реферальный код")
 

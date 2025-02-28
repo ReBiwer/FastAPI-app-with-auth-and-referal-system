@@ -8,6 +8,7 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
 from app.dao.database import Base
+from app.models.auth import User
 
 
 class ReferralCode(Base):

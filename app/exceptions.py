@@ -14,7 +14,9 @@ ReferralCodeNotFoundException = HTTPException(
 UserNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
 
 # Реферальный код не найден
-RefCodeNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Данный реферальный код не найден")
+RefCodeNotFoundException = HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND, detail="Данный реферальный код не найден"
+)
 
 # Отсутствует идентификатор пользователя
 UserIdNotFoundException = HTTPException(
