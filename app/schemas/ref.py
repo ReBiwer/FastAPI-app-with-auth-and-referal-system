@@ -7,7 +7,7 @@ from pydantic import Field
 from pydantic import computed_field
 from pydantic import field_validator
 
-from app.models.auth import User
+from app.models import User
 
 
 class CreateReferralCode(BaseModel):

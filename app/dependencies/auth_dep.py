@@ -1,18 +1,17 @@
 from datetime import datetime
 from datetime import timezone
 
-from dao.auth import UsersDAO
+from app.dao.auth import UsersDAO
 from fastapi import Depends
 from fastapi import Request
 from jose import ExpiredSignatureError
 from jose import JWTError
 from jose import jwt
-from models.auth import User
+from app.models import User
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.dependencies.dao_dep import get_session_without_commit
-from app.exceptions import ForbiddenException
 from app.exceptions import NoJwtException
 from app.exceptions import NoUserIdException
 from app.exceptions import TokenExpiredException
@@ -22,6 +21,7 @@ from app.exceptions import UserNotFoundException
 
 def get_access_token(request: Request) -> str:
     """Извлекаем access_token из кук."""
+    # request.headers.get("Authroization")
     token = request.cookies.get("user_access_token")
     if not token:
         raise TokenNoFound
@@ -69,22 +69,21 @@ async def get_current_user(
         raise NoJwtException
 
     expire: str = payload.get("exp")
-    expire_time = datetime.fromtimestamp(int(expire), tz=timezone.utc)
-    if (not expire) or (expire_time < datetime.now(timezone.utc)):
+    try:
+        expire_sec = int(expire)
+    except ValueError:
+        raise TokenExpiredException
+    expire_time = datetime.fromtimestamp(expire_sec, tz=timezone.utc)
+    if expire_time < datetime.now(timezone.utc):
         raise TokenExpiredException
 
-    user_id: str = payload.get("sub")
-    if not user_id:
+    str_user_id: str = payload.get("sub")
+    try:
+        user_id = int(str_user_id)
+    except ValueError:
         raise NoUserIdException
 
-    user = await UsersDAO(session).find_one_or_none_by_id(data_id=int(user_id))
+    user = await UsersDAO(session).find_one_or_none_by_id(data_id=user_id)
     if not user:
         raise UserNotFoundException
     return user
-
-
-async def get_current_admin_user(current_user: User = Depends(get_current_user)) -> User:
-    """Проверяем права пользователя как администратора."""
-    if current_user.role.id in [3, 4]:
-        return current_user
-    raise ForbiddenException

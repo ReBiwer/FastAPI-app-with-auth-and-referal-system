@@ -1,15 +1,15 @@
-from dao.auth import UsersDAO
+from app.dao.auth import UsersDAO
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import Response
-from app.models.auth import User
+from app.models import User
 from app.schemas.auth import EmailModel
 from app.schemas.auth import SUserAddDB
 from app.schemas.auth import SUserAuth
 from app.schemas.auth import SUserInfo
 from app.schemas.auth import SUserRegister
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.utils.auth import authenticate_user
+from app.utils.auth import verify_password
 from app.utils.auth import get_referrer
 from app.utils.auth import set_tokens
 
@@ -30,7 +30,7 @@ async def register_user(user_data: SUserRegister, session: AsyncSession = Depend
     user_dao = UsersDAO(session)
 
     existing_user = await user_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
-    if existing_user:
+    if not existing_user:
         raise UserAlreadyExistsException
 
     user_data_dict = user_data.model_dump()
@@ -54,10 +54,13 @@ async def auth_user(
 ) -> dict:
     users_dao = UsersDAO(session)
     user = await users_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
-
-    if not (user and await authenticate_user(user=user, password=user_data.password)):
+    if not user:
+        raise IncorrectEmailOrPasswordException
+    if not verify_password(user_data.password, user.password):
         raise IncorrectEmailOrPasswordException
     set_tokens(response, user.id)
+    # Authorization: Bearer токен_в_base64
+    # return {"auth_token": "", "refresh_token": ""}
     return {"ok": True, "message": "Авторизация успешна!"}
 
 

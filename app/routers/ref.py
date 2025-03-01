@@ -1,17 +1,18 @@
 import datetime
 
-from dao.ref import ReferralCodeDAO
+from app.dao.ref import ReferralCodeDAO
 from fastapi import APIRouter
 from fastapi import BackgroundTasks
 from fastapi import Depends
-from app.models.auth import User
+from fastapi import Response
+from app.models import User
 from app.schemas.ref import CreateReferralCode
 from app.schemas.ref import DeleteReferralCode
 from app.schemas.ref import ReferralCodeInfo
 from app.schemas.ref import Referrer
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.utils.ref import create_get_ref_code
+from app.utils.ref import create_ref_code as _create_ref_code
 from app.utils.ref import send_code_to_mail
 
 from app.dependencies.auth_dep import get_current_user
@@ -27,7 +28,7 @@ async def create_ref_code(
     session: AsyncSession = Depends(get_session_with_commit),
     user_data: User = Depends(get_current_user),
 ) -> ReferralCodeInfo:
-    new_code = create_get_ref_code()
+    new_code = _create_ref_code()
     ref_code = ReferralCodeInfo(code=new_code, action_time_day=data.action_time_day, user_id=user_data.id)
     ref_code_dao = ReferralCodeDAO(session)
     await ref_code_dao.add(ref_code)
@@ -39,11 +40,13 @@ async def delete_ref_code(code: DeleteReferralCode, session: AsyncSession = Depe
     ref_code_dao = ReferralCodeDAO(session)
     try:
         await ref_code_dao.delete(code)
+        # return Response(status_code=204)
         return {"status_code": 204, "success": True, "description": f"referral code {code.code} deleted"}
     except SQLAlchemyError:
         raise RefCodeNotFoundException
 
 
+# @router.post("/send/")
 @router.get("/get_on_mail/")
 async def get_ref_code(background_tasks: BackgroundTasks, user_data: User = Depends(get_current_user)) -> dict:
     action_time_code = user_data.referral_code.action_time - datetime.datetime.now()

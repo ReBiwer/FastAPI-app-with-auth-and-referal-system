@@ -1,4 +1,4 @@
-from app.models.auth import User
+from app.models import User
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
