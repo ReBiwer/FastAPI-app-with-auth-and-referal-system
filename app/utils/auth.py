@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 
 
-def create_tokens(data: dict) -> dict:
+def create_tokens(data: dict) -> tuple:
     # Текущее время в UTC
     now = datetime.now(timezone.utc)
 
@@ -29,7 +29,7 @@ def create_tokens(data: dict) -> dict:
     refresh_payload = data.copy()
     refresh_payload.update({"exp": int(refresh_expire.timestamp()), "type": "refresh"})
     refresh_token = jwt.encode(refresh_payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
-    return {"access_token": access_token, "refresh_token": refresh_token}
+    return access_token, refresh_token
 
 
 async def authenticate_user(user, password):
@@ -39,9 +39,7 @@ async def authenticate_user(user, password):
 
 
 def set_tokens(response: Response, user_id: int):
-    new_tokens = create_tokens(data={"sub": str(user_id)})
-    access_token = new_tokens.get("access_token")
-    refresh_token = new_tokens.get("refresh_token")
+    access_token, refresh_token = create_tokens(data={"sub": str(user_id)})
 
     response.set_cookie(key="user_access_token", value=access_token, httponly=True, secure=True, samesite="lax")
 
