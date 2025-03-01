@@ -25,9 +25,12 @@ class BaseDAO(Generic[T]):
         if self.model is None:
             raise ValueError("Модель должна быть указана в дочернем классе")
 
+    def _get_query_find_one(self, data_id):
+        return select(self.model).filter_by(id=data_id)
+
     async def find_one_or_none_by_id(self, data_id: int):
         try:
-            query = select(self.model).filter_by(id=data_id)
+            query = self._get_query_find_one(data_id)
             result = await self._session.execute(query)
             record = result.scalar_one_or_none()
             log_message = f"Запись {self.model.__name__} с ID {data_id} {'найдена' if record else 'не найдена'}."
